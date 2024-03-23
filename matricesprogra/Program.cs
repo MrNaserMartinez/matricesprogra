@@ -1,99 +1,179 @@
-﻿int[,] matriz = new int[10, 10];
-int opcion;
+﻿//inicio del programa principal
+string[] palabras = { "GATO", "PERRO", "CASA", "ARBOL" };
+char[,] tablero = GenerarTablero(palabras);
 
-do
+Console.WriteLine("¡Bienvenido al juego de búsqueda de palabras!");
+MostrarTablero(tablero);
+
+foreach (string palabra in palabras)
 {
-    Console.Clear();
-    Console.WriteLine("Menú de opciones");
-    Console.WriteLine("1. Llenar matriz con ceros");
-    Console.WriteLine("2. Mostrar matriz");
-    Console.WriteLine("3. Obtener valor de una posición");
-    Console.WriteLine("4. Cambiar valor de una posición");
-    Console.WriteLine("5. Salir");
-    Console.Write("Ingrese una opción: ");
-    opcion = int.Parse(Console.ReadLine());
+    Console.Write($"Ingresa la posición de la palabra '{palabra}' (fila, columna): ");
+    string[] posicion = Console.ReadLine().Split(',');
+    int fila = int.Parse(posicion[0]);
+    int columna = int.Parse(posicion[1]);
 
-    switch (opcion)
+    if (VerificarPalabra(tablero, palabra, fila, columna))
     {
-        case 1:
-            LlenarMatrizConCeros(matriz);
-            break;
-        case 2:
-            MostrarMatriz(matriz);
-            Console.ReadKey();
-            break;
-        case 3:
-            Console.Write("Ingrese la fila: ");
-            int fila = int.Parse(Console.ReadLine());
-            Console.Write("Ingrese la columna: ");
-            int columna = int.Parse(Console.ReadLine());
-            Console.WriteLine("El valor en la posición [{0}, {1}] es: {2}", fila, columna, ObtenerValorPosicion(matriz, fila, columna));
-            Console.ReadKey();
-            break;
-        case 4:
-            Console.Write("Ingrese la fila: ");
-            fila = int.Parse(Console.ReadLine());
-            Console.Write("Ingrese la columna: ");
-            columna = int.Parse(Console.ReadLine());
-            Console.Write("Ingrese el nuevo valor: ");
-            int nuevoValor = int.Parse(Console.ReadLine());
-            CambiarValorPosicion(matriz, fila, columna, nuevoValor);
-            break;
-        case 5:
-            Console.WriteLine("Saliendo del programa...");
-            break;
-        default:
-            Console.WriteLine("Opción inválida. Intente nuevamente.");
-            Console.ReadKey();
-            break;
+        Console.WriteLine("¡Correcto!");
     }
-} while (opcion != 5);
-
-
-static void LlenarMatrizConCeros(int[,] matriz)
-{
-    for (int i = 0; i < 10; i++)
+    else
     {
-        for (int j = 0; j < 10; j++)
+        Console.WriteLine("Incorrecto. Intenta de nuevo.");
+    }
+}
+
+Console.WriteLine("¡Felicidades! Has completado el juego.");
+Console.ReadLine();
+
+
+
+
+// funciones utilizadas en el programa principal
+static char[,] GenerarTablero(string[] palabras)
+{
+    int tamanio = 10;
+    char[,] tablero = new char[tamanio, tamanio];
+
+    // Rellenar el tablero con caracteres aleatorios
+    Random random = new Random();
+    for (int i = 0; i < tamanio; i++)
+    {
+        for (int j = 0; j < tamanio; j++)
         {
-            matriz[i, j] = 0;
+            tablero[i, j] = (char)random.Next('A', 'Z' + 1);
+        }
+    }
+
+    // Colocar las palabras en el tablero
+    foreach (string palabra in palabras)
+    {
+        UbicarPalabra(tablero, palabra);
+    }
+
+    return tablero;
+}
+
+static void UbicarPalabra(char[,] tablero, string palabra)
+{
+    int tamanio = tablero.GetLength(0);
+    Random random = new Random();
+    bool colocada = false;
+
+    while (!colocada)
+    {
+        int fila = random.Next(tamanio);
+        int columna = random.Next(tamanio);
+        int direccion = random.Next(8); // 0: horizontal, 1: vertical, 2-7: diagonales
+
+        if (PuedeColocarPalabra(tablero, palabra, fila, columna, direccion))
+        {
+            ColocarPalabraEnTablero(tablero, palabra, fila, columna, direccion);
+            colocada = true;
         }
     }
 }
 
-static void MostrarMatriz(int[,] matriz)
+static bool PuedeColocarPalabra(char[,] tablero, string palabra, int fila, int columna, int direccion)
 {
-    for (int i = 0; i < 10; i++)
+    int tamanio = tablero.GetLength(0);
+    int filaOffset = 0, columnaOffset = 0;
+
+    switch (direccion)
     {
-        for (int j = 0; j < 10; j++)
+        case 0: // Horizontal derecha
+            columnaOffset = 1;
+            break;
+        case 1: // Vertical abajo
+            filaOffset = 1;
+            break;
+        case 2: // Diagonal derecha abajo
+            filaOffset = 1;
+            columnaOffset = 1;
+            break;
+            // ... (omitido por brevedad)
+    }
+
+    int filaSiguiente = fila + filaOffset;
+    int columnaSiguiente = columna + columnaOffset;
+
+    for (int i = 0; i < palabra.Length; i++)
+    {
+        if (filaSiguiente >= tamanio  columnaSiguiente >= tamanio  tablero[filaSiguiente, columnaSiguiente] != '\0')
         {
-            Console.Write("{0,3}", matriz[i, j]);
+        return false;
+    }
+
+    filaSiguiente += filaOffset;
+    columnaSiguiente += columnaOffset;
+}
+
+return true;
+}
+
+static void ColocarPalabraEnTablero(char[,] tablero, string palabra, int fila, int columna, int direccion)
+{
+    int filaOffset = 0, columnaOffset = 0;
+
+    switch (direccion)
+    {
+        case 0: // Horizontal derecha
+            columnaOffset = 1;
+            break;
+        case 1: // Vertical abajo
+            filaOffset = 1;
+            break;
+        case 2: // Diagonal derecha abajo
+            filaOffset = 1;
+            columnaOffset = 1;
+            break;
+            // ... (omitido por brevedad)
+    }
+
+    for (int i = 0; i < palabra.Length; i++)
+    {
+        tablero[fila, columna] = palabra[i];
+        fila += filaOffset;
+        columna += columnaOffset;
+    }
+}
+
+static void MostrarTablero(char[,] tablero)
+{
+    int tamanio = tablero.GetLength(0);
+    Console.WriteLine("   " + new string('-', tamanio * 2 + 1));
+    for (int i = 0; i < tamanio; i++)
+    {
+        Console.Write($"{i + 1,2} "); // Mostrar el número de fila
+        for (int j = 0; j < tamanio; j++)
+        {
+            Console.Write($"|{tablero[i, j]}");
         }
-        Console.WriteLine();
+        Console.WriteLine("|");
     }
+    Console.WriteLine("   " + new string('-', tamanio * 2 + 1));
+    Console.WriteLine("    " + new string(' ', tamanio) + "Columnas");
 }
 
-static int ObtenerValorPosicion(int[,] matriz, int fila, int columna)
+static bool VerificarPalabra(char[,] tablero, string palabra, int fila, int columna)
 {
-    if (fila >= 0 && fila < 10 && columna >= 0 && columna < 10)
-    {
-        return matriz[fila, columna];
-    }
-    else
-    {
-        Console.WriteLine("Posición fuera de rango.");
-        return 0;
-    }
-}
+    int tamanio = tablero.GetLength(0);
+    int longitudPalabra = palabra.Length;
 
-static void CambiarValorPosicion(int[,] matriz, int fila, int columna, int nuevoValor)
-{
-    if (fila >= 0 && fila < 10 && columna >= 0 && columna < 10)
+    // Verificar horizontal derecha
+    if (columna + longitudPalabra <= tamanio)
     {
-        matriz[fila, columna] = nuevoValor;
+        string palabraEncontrada = "";
+        for (int i = 0; i < longitudPalabra; i++)
+        {
+            palabraEncontrada += tablero[fila, columna + i];
+        }
+        if (palabraEncontrada == palabra)
+        {
+            return true;
+        }
     }
-    else
-    {
-        Console.WriteLine("Posición fuera de rango.");
-    }
+
+    // Verificar otras direcciones (omitido por brevedad)
+
+    return false;
 }
