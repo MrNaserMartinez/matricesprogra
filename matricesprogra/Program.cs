@@ -98,7 +98,7 @@ static bool PuedeColocarPalabra(char[,] tablero, string palabra, int fila, int c
 
     for (int i = 0; i < palabra.Length; i++)
     {
-        if (filaSiguiente >= tamanio  columnaSiguiente >= tamanio  tablero[filaSiguiente, columnaSiguiente] != '\0')
+        if (filaSiguiente >= tamanio || columnaSiguiente >= tamanio || tablero[filaSiguiente, columnaSiguiente] != '\0')
         {
         return false;
     }
