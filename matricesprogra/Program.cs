@@ -1,5 +1,4 @@
-﻿//inicio programa
-string[] palabras = { "GATO", "PERRO", "CASA", "ARBOL" };
+﻿string[] palabras = { "GATO", "PERRO", "CASA", "ARBOL" };
 char[,] tablero = GenerarTablero(palabras);
 
 Console.WriteLine("¡Bienvenido al juego de búsqueda de palabras!");
