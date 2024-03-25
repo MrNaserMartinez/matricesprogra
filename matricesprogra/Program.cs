@@ -25,9 +25,6 @@ foreach (string palabra in palabras)
 Console.WriteLine("¡Felicidades! Has completado el juego.");
 Console.ReadLine();
 
-
-
-
 // funciones utilizadas en el programa principal
 static char[,] GenerarTablero(string[] palabras)
 {
@@ -90,24 +87,43 @@ static bool PuedeColocarPalabra(char[,] tablero, string palabra, int fila, int c
             filaOffset = 1;
             columnaOffset = 1;
             break;
-            // ... (omitido por brevedad)
+        case 3: // Horizontal izquierda
+            columnaOffset = -1;
+            break;
+        case 4: // Vertical arriba
+            filaOffset = -1;
+            break;
+        case 5: // Diagonal izquierda arriba
+            filaOffset = -1;
+            columnaOffset = -1;
+            break;
+        case 6: // Diagonal izquierda abajo
+            filaOffset = 1;
+            columnaOffset = -1;
+            break;
+        case 7: // Diagonal derecha arriba
+            filaOffset = -1;
+            columnaOffset = 1;
+            break;
     }
 
-    int filaSiguiente = fila + filaOffset;
-    int columnaSiguiente = columna + columnaOffset;
+    int filaSiguiente = fila + filaOffset * (palabra.Length - 1);
+    int columnaSiguiente = columna + columnaOffset * (palabra.Length - 1);
 
-    for (int i = 0; i < palabra.Length; i++)
+    if (filaSiguiente >= tamanio || columnaSiguiente >= tamanio)
     {
-        if (filaSiguiente >= tamanio || columnaSiguiente >= tamanio || tablero[filaSiguiente, columnaSiguiente] != '\0')
-        {
         return false;
     }
 
-    filaSiguiente += filaOffset;
-    columnaSiguiente += columnaOffset;
-}
+    for (int i = 0; i < palabra.Length; i++)
+    {
+        if (tablero[fila + filaOffset * i, columna + columnaOffset * i] != '\0')
+        {
+            return false;
+        }
+    }
 
-return true;
+    return true;
 }
 
 static void ColocarPalabraEnTablero(char[,] tablero, string palabra, int fila, int columna, int direccion)
@@ -126,14 +142,29 @@ static void ColocarPalabraEnTablero(char[,] tablero, string palabra, int fila, i
             filaOffset = 1;
             columnaOffset = 1;
             break;
-            // ... (omitido por brevedad)
+        case 3: // Horizontal izquierda
+            columnaOffset = -1;
+            break;
+        case 4: // Vertical arriba
+            filaOffset = -1;
+            break;
+        case 5: // Diagonal izquierda arriba
+            filaOffset = -1;
+            columnaOffset = -1;
+            break;
+        case 6: // Diagonal izquierda abajo
+            filaOffset = 1;
+            columnaOffset = -1;
+            break;
+        case 7: // Diagonal derecha arriba
+            filaOffset = -1;
+            columnaOffset = 1;
+            break;
     }
 
     for (int i = 0; i < palabra.Length; i++)
     {
-        tablero[fila, columna] = palabra[i];
-        fila += filaOffset;
-        columna += columnaOffset;
+        tablero[fila + filaOffset * i, columna + columnaOffset * i] = palabra[i];
     }
 }
 
